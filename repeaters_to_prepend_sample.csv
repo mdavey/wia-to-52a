@@ -1,0 +1,4 @@
+Group No,Group Name,CH No,Name,Frequency,Dup,Offset,TS,Mode,SKIP,TONE,Repeater Tone,TSQL Frequency,DTCS Code,DTCS Polarity,DV SQL,DV CSQL Code,Your Call Sign,RPT1 Call Sign,RPT2 Call Sign
+00,Favorites,00,Simplex 1,146.500000,OFF,0.600000,12.5kHz,FM,OFF,OFF,88.5Hz,88.5Hz,023,BOTH N,,,,,
+00,Favorites,01,Simplex 2,146.525000,OFF,5.000000,12.5kHz,FM,OFF,OFF,88.5Hz,88.5Hz,023,BOTH N,,,,,
+00,Favorites,02,Simplex 3,146.550000,OFF,0.000000,12.5kHz,FM,SKIP,OFF,88.5Hz,88.5Hz,023,BOTH N,,,,,

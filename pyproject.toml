@@ -1,0 +1,7 @@
+[project]
+name = "wia-to-52a"
+version = "0.1.0"
+description = "Converts the WIA repeater directory into a CSV file suitable for programming an Icom IC-52A handheld radio."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
