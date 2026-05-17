@@ -5,18 +5,21 @@ Converts the [WIA](https://www.wia.org.au) repeater directory into a CSV file su
 ## Usage
 
 ```bash
-uv run main.py
+uv run main.py input_wia.csv output.csv
+uv run main.py input_wia.csv output.csv --prepend favorites.csv
 ```
 
-This reads `Repeater Directory 250925.csv` and `repeaters_to_prepend.csv` and writes `output 52a.csv`.
+Download the WIA repeater directory CSV from [wia.org.au/members/repeaters/data](https://www.wia.org.au/members/repeaters/data/).
 
-## Files
+### Options
 
-| File | Description |
-|------|-------------|
-| `Repeater Directory 250925.csv` | WIA repeater directory (input) |
-| `repeaters_to_prepend.csv` | Manual favorites/simplex channels to include as Group 00 |
-| `output 52a.csv` | Icom 52A programming file (output) |
+| Argument | Description |
+|----------|-------------|
+| `input_wia.csv` | WIA repeater directory CSV file (required) |
+| `output.csv` | Output CSV file for Icom 52A programming (required) |
+| `--prepend favorites.csv` | Custom channels in 52A format to include as Group 00 (optional) |
+
+A sample favorites file is provided as [`favorites_sample.csv`](favorites_sample.csv).
 
 ## What it does
 
