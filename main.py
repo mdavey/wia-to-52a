@@ -1,4 +1,6 @@
+import argparse
 import csv
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -200,11 +202,42 @@ def write_52a_csv(path: Path, groups: list[tuple[str, list[Repeater]]], prepend_
 
 
 def main():
-    source = Path("Repeater Directory 250925.csv")
-    output = Path("output 52a.csv")
-    prepend = Path("repeaters_to_prepend.csv")
-    repeaters = read_repeater_directory(source)
-    print(f"Loaded {len(repeaters)} repeaters from {source.name}\n")
+    parser = argparse.ArgumentParser(
+        description="Convert WIA repeater directory CSV to Icom IC-52A programming CSV format.",
+        epilog="Download the WIA Repeater Directory from "
+        "https://www.wia.org.au/members/repeaters/data/",
+    )
+    parser.add_argument(
+        "input",
+        type=Path,
+        metavar="input_wia.csv",
+        help="WIA repeater directory CSV file",
+    )
+    parser.add_argument(
+        "output",
+        type=Path,
+        metavar="output.csv",
+        help="Output CSV file for Icom 52A programming",
+    )
+    parser.add_argument(
+        "--prepend",
+        type=Path,
+        metavar="favorites.csv",
+        help="Custom channels CSV in 52A format to include as Group 00 "
+        "(e.g. favorites and simplex channels)",
+    )
+    args = parser.parse_args()
+
+    if not args.input.is_file():
+        print(f"Error: Input file not found: {args.input}", file=sys.stderr)
+        sys.exit(1)
+
+    if args.prepend and not args.prepend.is_file():
+        print(f"Error: Prepend file not found: {args.prepend}", file=sys.stderr)
+        sys.exit(1)
+
+    repeaters = read_repeater_directory(args.input)
+    print(f"Loaded {len(repeaters)} repeaters from {args.input.name}\n")
 
     groups = [
         (name, sorted(repeaters, key=lambda r: r.call.upper()))
@@ -232,8 +265,8 @@ def main():
     total = sum(len(g) for _, g in groups)
     print(f"\nTotal: {total} repeaters across {len(groups)} groups")
 
-    write_52a_csv(output, groups, prepend)
-    print(f"\nWritten to {output}")
+    write_52a_csv(args.output, groups, args.prepend)
+    print(f"\nWritten to {args.output}")
 
 
 if __name__ == "__main__":
