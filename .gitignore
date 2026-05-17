@@ -9,6 +9,5 @@ wheels/
 # Virtual environments
 .venv
 
-# CSV files (input/output data)
-*.csv
-!repeaters_to_prepend_sample.csv
+# files used for testing
+testfiles
