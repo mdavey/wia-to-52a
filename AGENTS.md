@@ -7,32 +7,34 @@
 ## Commands
 
 ```bash
-uv run main.py
+uv run main.py input_wia.csv output.csv
+uv run main.py input_wia.csv output.csv --prepend favorites.csv
 ```
 
-Reads `Repeater Directory 250925.csv`, writes `output 52a.csv`. No build/test/lint configured.
+Positional args: input WIA CSV and output path. `--prepend` is optional and adds custom channels as Group 00. Script exits with error if input or prepend files don't exist. No build/test/lint configured.
 
 ## Data Flow
 
-1. `read_repeater_directory()` — parses WIA CSV into `Repeater` dataclasses, tracking section markers
-2. `filter_repeaters()` — filters by region (call sign prefix), mode, and band
-3. `repeater_to_row()` — maps each `Repeater` to an Icom 52A CSV row dict
-4. `write_52a_csv()` — writes header, prepends `repeaters_to_prepend.csv` content (minus header), then writes all groups
+1. `main()` — parses CLI args via `argparse`, validates file existence
+2. `read_repeater_directory()` — parses WIA CSV into `Repeater` dataclasses, tracking section markers
+3. `filter_repeaters()` — filters by region (call sign prefix), mode, and band
+4. `repeater_to_row()` — maps each `Repeater` to an Icom 52A CSV row dict
+5. `write_52a_csv()` — writes header, optionally prepends favorites file content (minus header), then writes all groups
 
 ## Input Files
 
-- **`Repeater Directory 250925.csv`** — WIA repeater directory. Columns: `Output`, `Input`, `Call`, `mNemonic`, `Location`, `Service Area`, `Latitude`, `Longitude`, `S`, `ERP`, `HASL`, `T/O`, `Sp`, `Tone`, `Notes`.
-- **`repeaters_to_prepend.csv`** — Manual favorites/simplex channels in 52A format (with header). Written as Group 00 before the generated groups.
+- **WIA repeater directory CSV** (positional arg) — Columns: `Output`, `Input`, `Call`, `mNemonic`, `Location`, `Service Area`, `Latitude`, `Longitude`, `S`, `ERP`, `HASL`, `T/O`, `Sp`, `Tone`, `Notes`. Download from https://www.wia.org.au/members/repeaters/data/
+- **Favorites CSV** (`--prepend`, optional) — Manual favorites/simplex channels in 52A format (with header). Written as Group 00 before the generated groups. See `favorites_sample.csv` for an example.
 
 ## Output File
 
-- **`output 52a.csv`** — Icom 52A programming CSV. See `HEADER` constant for column list.
+- **Output CSV** (positional arg) — Icom 52A programming CSV. See `HEADER` constant for column list.
 
 ## Output Group Structure
 
 | Group | Name | Filter |
 |-------|------|--------|
-| 00 | Favorites | From `repeaters_to_prepend.csv` |
+| 00 | Favorites | From `--prepend` file (optional) |
 | 01 | VK3 FM 2M | VK3, FM, 2M |
 | 02 | VK3 FM 70CM | VK3, FM, 70CM |
 | 03 | VK3 DStar | VK3, DSTAR |
