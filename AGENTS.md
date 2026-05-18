@@ -2,7 +2,16 @@
 
 ## Project Overview
 
-**wia-to-52a** converts WIA (Wireless Institute of Australia) repeater directory CSV data into Icom IC-52A (and compatible) radio programming CSV format. Single-file Python script (`main.py`), no dependencies beyond stdlib, Python 3.13+, managed with `uv`.
+**wia-to-52a** converts WIA (Wireless Institute of Australia) repeater directory CSV data into Icom IC-52A (and compatible) radio programming CSV format. Python 3.13+, no dependencies beyond stdlib, managed with `uv`.
+
+## Project Structure
+
+- `main.py` — CLI entry point (argparse interface only)
+- `wiato52a/` — Core library package
+  - `models.py` — `Section` and `Repeater` dataclasses
+  - `readers.py` — WIA CSV parsing and prepend file reading
+  - `convert.py` — Filtering, row formatting, and 52A CSV writing
+  - `__init__.py` — Re-exports public API
 
 ## Commands
 
@@ -11,7 +20,13 @@ uv run main.py input_wia.csv output.csv
 uv run main.py input_wia.csv output.csv --prepend favorites.csv
 ```
 
-Positional args: input WIA CSV and output path. `--prepend` is optional and adds custom channels as Group 00. Script exits with error if input or prepend files don't exist. No build/test/lint configured.
+Positional args: input WIA CSV and output path. `--prepend` is optional and adds custom channels as Group 00. Script exits with error if input or prepend files don't exist.
+
+```bash
+bash run_test.sh
+```
+
+Runs the converter against test input files in `testfiles/` and diffs the output against a known-good reference. Run this after any changes to verify correctness.
 
 ## Data Flow
 
@@ -20,15 +35,6 @@ Positional args: input WIA CSV and output path. `--prepend` is optional and adds
 3. `filter_repeaters()` — filters by region (call sign prefix), mode, and band
 4. `repeater_to_row()` — maps each `Repeater` to an Icom 52A CSV row dict
 5. `write_52a_csv()` — writes header, optionally prepends favorites file content (minus header), then writes all groups
-
-## Input Files
-
-- **WIA repeater directory CSV** (positional arg) — Columns: `Output`, `Input`, `Call`, `mNemonic`, `Location`, `Service Area`, `Latitude`, `Longitude`, `S`, `ERP`, `HASL`, `T/O`, `Sp`, `Tone`, `Notes`. Download from https://www.wia.org.au/members/repeaters/data/
-- **Favorites CSV** (`--prepend`, optional) — Manual favorites/simplex channels in 52A format (with header). Written as Group 00 before the generated groups. See `favorites_sample.csv` for an example.
-
-## Output File
-
-- **Output CSV** (positional arg) — Icom 52A programming CSV. See `HEADER` constant for column list.
 
 ## Output Group Structure
 
